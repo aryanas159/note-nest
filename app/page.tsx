@@ -1,113 +1,311 @@
-import Image from "next/image";
+"use client";
+import Navbar from "@/components/Navbar";
+import api from "@/lib/api";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import Book from "@/components/Book";
+import CreateBook from "@/components/CreateBook";
+import { CircularProgress } from "@mui/joy";
+import AddPage from "@/components/AddPage";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { TbPointFilled } from "react-icons/tb";
+import { MdDelete } from "react-icons/md";
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+	const [books, setBooks] = useState<Book[]>([]);
+	const { data: session } = useSession();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const searchParams = useSearchParams();
+	const router = useRouter();
+	const selectedBook = Number(searchParams.get("book_id")) || null;
+	const [notes, setNotes] = useState<Note[]>([]);
+	const selectedNote = Number(searchParams.get("note_id")) || null;
+	useEffect(() => {
+		if (session?.user) {
+			api
+				.get(`/book?user_email=${session.user.email}`)
+				.then((response) => {
+					setBooks(response.data.books);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
+	}, [session]);
+	useEffect(() => {
+		if (selectedBook) {
+			api
+				.get(`/note?book_id=${selectedBook}`)
+				.then((response) => {
+					setNotes(response.data.notes);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
+	}, [selectedBook]);
+	return (
+		<main className="bg-black w-screen h-screen flex flex-col">
+			<Navbar />
+			<div className="flex flex-1">
+				<div className="flex flex-col w-[20vw] bg-[#141414] h-full p-4 items-center">
+					{session?.user?.email ? (
+						<>
+							<h2 className="text-lg font-semibold">Your Books</h2>
+							<CreateBook user_email={session.user.email} setBooks={setBooks} />
+							<div className="w-full flex flex-col gap-2 p-4 ">
+								{books.map((book) => (
+									<Book
+										key={book.book_id}
+										book={book}
+										setBooks={setBooks}
+										notes={notes}
+									/>
+								))}
+							</div>
+						</>
+					) : (
+						<p>You need to sign in to see your books</p>
+					)}
+				</div>
+				<div className="flex-1 flex flex-col h-full">
+					{selectedBook && books.length > 0 ? (
+						<>
+							{!selectedNote && (
+								<div className="flex items-end gap-16 p-4 px-16">
+									<input
+										className="text-[2rem] font-semibold bg-black p-2 outline-none border-b border-primary"
+										value={
+											books.filter((book) => book.book_id == selectedBook)[0]
+												?.book_title
+										}
+										onChange={async (e) => {
+											setBooks((prev) => {
+												return prev.map((book) => {
+													if (book.book_id === selectedBook) {
+														book.book_title =
+															e.target.value == ""
+																? "Untitled"
+																: e.target.value;
+													}
+													return book;
+												});
+											});
+											try {
+												setIsLoading(true);
+												const currentBook = books.filter(
+													(book) => book.book_id == selectedBook
+												)[0];
+												await api.put("/book", {
+													book_id: currentBook.book_id,
+													book_title: currentBook.book_title,
+													book_description: e.target.value,
+													user_email: session?.user?.email,
+												});
+												setIsLoading(false);
+											} catch (error) {
+												console.error(error);
+												setIsLoading(false);
+											}
+										}}
+									/>
+									{/* {isLoading && (
+									<CircularProgress
+										variant="plain"
+										size="sm"
+										className="text-white text-xs"
+									/>
+								)} */}
+									<AddPage book_id={selectedBook} setNotes={setNotes} />
+								</div>
+							)}
+							{notes.length > 0 ? (
+								<>
+									{selectedNote ? (
+										<div className="px-16 p-4 flex-1 flex flex-col gap-2 items-start">
+											<div className="p-4 flex gap-2 items-center">
+												<TbPointFilled />
+												<input
+													className="text-[2rem] font-semibold bg-black outline-none"
+													value={
+														notes.filter(
+															(note) => note.note_id == selectedNote
+														)[0]?.note_title
+													}
+													onChange={async (e) => {
+														setNotes((prev) => {
+															return prev.map((note) => {
+																if (note.note_id === selectedNote) {
+																	note.note_title =
+																		e.target.value == ""
+																			? "Untitled"
+																			: e.target.value;
+																}
+																return note;
+															});
+														});
+														try {
+															setIsLoading(true);
+															const currentNote = notes.filter(
+																(note) => note.note_id == selectedNote
+															)[0];
+															await api.put("/note", {
+																note_id: currentNote.note_id,
+																note_title: e.target.value,
+																note_body: currentNote.note_body,
+															});
+															setIsLoading(false);
+														} catch (error) {
+															console.error(error);
+															setIsLoading(false);
+														}
+													}}
+												/>
+											</div>
+											<div className="p-8 w-full flex-1">
+												<textarea
+													className="bg-black w-full min-h-full text-white outline-0 p-4"
+													placeholder="Write your notes here"
+													maxLength={2000}
+													value={
+														notes.filter(
+															(note) => note.note_id == selectedNote
+														)[0].note_body
+													}
+													onChange={async (e) => {
+														setNotes((prev) => {
+															return prev.map((note) => {
+																if (note.note_id === selectedNote) {
+																	note.note_body = e.target.value;
+																}
+																return note;
+															});
+														});
+														try {
+															setIsLoading(true);
+															const currentNote = notes.filter(
+																(note) => note.note_id == selectedNote
+															)[0];
+															await api.put("/note", {
+																note_id: currentNote.note_id,
+																note_title: currentNote.note_title,
+																note_body: e.target.value,
+															});
+															setIsLoading(false);
+														} catch (error) {
+															console.error(error);
+															setIsLoading(false);
+														}
+													}}
+												></textarea>
+												<h3>
+													{
+														notes.filter(
+															(note) => note.note_id == selectedNote
+														)[0].note_body.length
+													}{" "}
+													/ 2000
+												</h3>
+											</div>
+										</div>
+									) : (
+										<div className="p-4 pr-28 pl-16  flex flex-col gap-4">
+											{notes.map((note) => (
+												<button
+													key={note.note_id}
+													className="p-2 text-sm hover:bg-[#181818] transition-all rounded-lg flex items-center gap-2 border border-primary"
+													onClick={() =>
+														router.push(
+															`?book_id=${selectedBook}&&note_id=${note.note_id}`
+														)
+													}
+												>
+													<TbPointFilled />
+													<div className="flex items-center justify-between flex-1">
+														<div className="flex items-end gap-4 ">
+															<h3 className="text-lg font-semibold ">
+																{note.note_title}
+															</h3>
+															<p className="text-xs">
+																{new Date(note.created_at).toLocaleDateString()}
+															</p>
+														</div>
+														<button>
+															<MdDelete
+																className="text-lg"
+																onClick={async (e) => {
+																	e.stopPropagation();
+																	try {
+																		await api.delete(
+																			`/note?note_id=${note.note_id}`
+																		);
+																		setNotes((prev) => {
+																			return prev.filter(
+																				(n) => n.note_id !== note.note_id
+																			);
+																		});
+																	} catch (error) {
+																		console.error(error);
+																	}
+																}}
+															/>
+														</button>
+													</div>
+												</button>
+											))}
+										</div>
+									)}
+								</>
+							) : (
+								<div className="p-8 w-full flex-1">
+									<textarea
+										className="bg-black w-full min-h-full text-white p-4 outline-0"
+										placeholder="
+								Write your notes here
+								"
+										value={
+											books.filter((book) => book.book_id == selectedBook)[0]
+												.book_description
+										}
+										onChange={async (e) => {
+											setBooks((prev) => {
+												return prev.map((book) => {
+													if (book.book_id === selectedBook) {
+														book.book_description = e.target.value;
+													}
+													return book;
+												});
+											});
+											try {
+												setIsLoading(true);
+												const currentBook = books.filter(
+													(book) => book.book_id == selectedBook
+												)[0];
+												await api.put("/book", {
+													book_id: currentBook.book_id,
+													book_title: currentBook.book_title,
+													book_description: e.target.value,
+													user_email: session?.user?.email,
+												});
+												setIsLoading(false);
+											} catch (error) {
+												console.error(error);
+												setIsLoading(false);
+											}
+										}}
+									></textarea>
+								</div>
+							)}
+						</>
+					) : (
+						<h1 className="text-2xl font-semibold p-4 text-center">
+							Select a book from the left to see the notes in it or create a new
+							book
+						</h1>
+					)}
+				</div>
+			</div>
+		</main>
+	);
 }
